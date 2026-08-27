@@ -1,8 +1,23 @@
+import { useRef, useContext } from 'react';
+
+// Importe o contexto (Ajuste o caminho até a pasta contexts conforme sua estrutura, normalmente 6 níveis acima)
+import CurrentUserContext from '../../../../../../contexts/CurrentUserContext.js';
+
 export default function EditAvatar() {
+  const { handleUpdateAvatar } = useContext(CurrentUserContext);
+
+  // 1. Criação do ref para acessar o input diretamente no DOM
+  const avatarInputRef = useRef();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Formulário de avatar enviado sem recarregar!");
+
+    // 2. Passa o valor do input acessado pela ref para a função do contexto
+    handleUpdateAvatar({
+      avatar: avatarInputRef.current.value,
+    });
   };
+
   return (
     <form
       className="popup__form"
@@ -13,6 +28,7 @@ export default function EditAvatar() {
     >
       <label className="popup__field">
         <input
+          ref={avatarInputRef} // 3. Vinculação da ref ao input
           className="popup__input popup__input_type_url"
           id="avatar-link"
           name="avatar"

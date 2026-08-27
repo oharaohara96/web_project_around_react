@@ -1,108 +1,94 @@
-import { useState } from "react";
+import { useContext } from "react";
 
-import avatarImg from "../../images/avatar.jpg";
+// Contexto: sai de Main (../) e sai de Components (../) até chegar na pasta contexts
+import CurrentUserContext from "../../contexts/CurrentUserContext.js";
+
+// Subcomponentes: estão dentro da subpasta "components" que fica do lado do seu Main.jsx
+import Card from "./components/Card/Card.jsx";
 import Popup from "./components/Popup/Popup.jsx";
 import NewCard from "./components/Popup/components/NewCard/NewCard.jsx";
 import EditProfile from "./components/Popup/components/EditProfile/EditProfile.jsx";
 import EditAvatar from "./components/Popup/components/EditAvatar/EditAvatar.jsx";
-import Card from "./components/Card/Card.jsx";
 
-// Dados fictícios (Mock data)
-const cards = [
-  {
-    isLiked: false,
-    _id: '5d1f0611d321eb4bdcd707dd',
-    name: 'Yosemite Valley',
-    link: 'https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_yosemite.jpg',
-    owner: '5d1f0611d321eb4bdcd707dd',
-    createdAt: '2019-07-05T08:10:57.741Z',
-  },
-  {
-    isLiked: false,
-    _id: '5d1f064ed321eb4bdcd707de',
-    name: 'Lake Louise',
-    link: 'https://practicum-content.s3.us-west-1.amazonaws.com/web-code/moved_lake-louise.jpg',
-    owner: '5d1f0611d321eb4bdcd707dd',
-    createdAt: '2019-07-05T08:11:58.324Z',
-  },
-];
-
-console.log(cards);
-
-function Main() {
-  const [popup, setPopup] = useState(null);
-
-  // Configuração dos objetos de cada popup formulário
-  const newCardPopup = { title: "Novo lugar", children: <NewCard /> };
-  const editProfilePopup = { title: "Editar perfil", children: <EditProfile /> };
-  const editAvatarPopup = { title: "Alterar a foto do perfil", children: <EditAvatar /> };
-
-  // Função que abre QUALQUER popup (seja formulário ou imagem)
-  function handleOpenPopup(popupConfig) {
-    setPopup(popupConfig);
-  }
-
-  // Função que fecha o popup ativo
-  const handleClosePopup = () => {
-    setPopup(null);
-  };
+function Main({
+  cards,
+  onCardLike,
+  onCardDelete,
+  onOpenPopup,
+  onClosePopup,
+  popup,
+}) {
+  // Desestruturação para extrair currentUser do objeto do contexto
+  const { currentUser } = useContext(CurrentUserContext);
 
   return (
     <main className="content">
+      {/* Seção de Perfil */}
       <section className="profile page__section">
-        <div className="profile__avatar-container">
+        <div
+          className="profile__avatar-container"
+          onClick={() =>
+            onOpenPopup({
+              children: <EditAvatar />,
+              title: "Alterar a foto do perfil",
+            })
+          }
+        >
           <img
-            className="profile__image profile__avatar"
-            src={avatarImg}
-            alt="Avatar"
+            src={currentUser?.avatar}
+            alt="Avatar do usuário"
+            className="profile__image"
           />
-          <button
-            aria-label="Alterar foto de perfil"
-            className="profile__avatar-edit-button"
-            type="button"
-            onClick={() => handleOpenPopup(editAvatarPopup)}
-          ></button>
         </div>
-
         <div className="profile__info">
-          <h1 className="profile__title">Jacques Cousteau</h1>
+          <h1 className="profile__title">{currentUser?.name}</h1>
           <button
-            aria-label="Editar perfil"
-            className="profile__edit-button"
             type="button"
-            onClick={() => handleOpenPopup(editProfilePopup)}
-          ></button>
-          <p className="profile__description">Explorador</p>
+            className="profile__edit-button"
+            aria-label="Editar perfil"
+            onClick={() =>
+              onOpenPopup({
+                children: <EditProfile onClose={onClosePopup} />,
+                title: "Editar perfil",
+              })
+            }
+          />
+          <p className="profile__description">{currentUser?.about}</p>
         </div>
-
         <button
-          aria-label="Adicionar cartão"
-          className="profile__add-button"
           type="button"
-          onClick={() => handleOpenPopup(newCardPopup)}
-        ></button>
+          className="profile__add-button"
+          aria-label="Adicionar cartão"
+          onClick={() =>
+            onOpenPopup({
+              children: <NewCard />,
+              title: "Novo local",
+            })
+          }
+        />
       </section>
 
+      {/* Seção de Cartões */}
       <section className="cards page__section">
         <ul className="cards__list">
-          {/* Loop que renderiza os cartões na tela */}
           {cards.map((card) => (
             <Card
               key={card._id}
               card={card}
-              onCardClick={handleOpenPopup}
+              onCardClick={onOpenPopup}
+              onCardLike={onCardLike}
+              onCardDelete={onCardDelete}
             />
           ))}
         </ul>
       </section>
 
-      {/* RENDERIZAÇÃO CONDICIONAL DO POPUP CORINGA */}
+      {/* Renderização condicional do Popup */}
       {popup && (
-        <Popup onClose={handleClosePopup} title={popup.title}>
+        <Popup title={popup.title} onClose={onClosePopup}>
           {popup.children}
         </Popup>
       )}
-
     </main>
   );
 }
