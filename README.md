@@ -1,16 +1,45 @@
-# React + Vite
+Around The U.S. (Localize-se) — React Application
+Uma aplicação web responsiva em React baseada no projeto da TripleTen, permitindo aos usuários compartilhar, curtir e gerenciar cartões de locais turísticos e fotos pessoais.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Funcionalidades Principais
+Gerenciamento de Perfil: Exibição dinâmica das informações do usuário e do seu avatar integrados à API.
 
-Currently, two official plugins are available:
+Galeria Dinâmica: Carregamento inicial de cartões a partir de uma API externa.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Sistema de Curtidas: Funcionalidade de dar e remover likes, sincronizada em tempo real no estado e na API.
 
-## React Compiler
+Adição e Remoção de Cartões: Possibilidade de adicionar novos cartões com título/imagem e excluir cartões que pertencem ao usuário logado.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Modais e Popups: Visualização de imagens expandidas e edição de perfil por meio de popups interativos.
 
-## Expanding the ESLint configuration
+Tecnologias Utilizadas
+React (JSX) — Biblioteca principal para construção da interface baseada em componentes.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Hooks do React: useState, useEffect, useContext.
+
+Context API: Compartilhamento do estado do usuário (CurrentUserContext) entre diferentes componentes.
+
+JavaScript (ES6+): Programação assíncrona com Promise.all e requisições HTTP via fetch.
+
+CSS3: Estilização responsiva seguindo a metodologia BEM.
+
+Estrutura do Projeto
+Plaintext
+src/
+├── components/
+│   ├── Footer/
+│   │   └── Footer.jsx
+│   ├── Header/
+│   │   └── Header.jsx
+│   ├── Main/
+│   │   ├── Card.jsx
+│   │   └── Main.jsx
+│   └── Popup/
+│       └── ImagePopup/
+│           └── ImagePopup.jsx
+├── contexts/
+│   └── CurrentUserContext.js
+├── utils/
+│   └── api.js
+├── App.jsx
+└── index.js
