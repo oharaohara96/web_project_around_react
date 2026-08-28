@@ -11,7 +11,7 @@ import Footer from "./Footer/Footer.jsx";
 
 function App() {
   const [currentUser, setCurrentUser] = useState({});
-  const [cards, setCards] = useState([]); // 🌟 ESTADO ELEVADO
+  const [cards, setCards] = useState([]);
   const [popup, setPopup] = useState(null);
 
   useEffect(() => {
@@ -61,12 +61,12 @@ function App() {
       });
   };
 
-  //  MANIPULADOR DE ADIÇÃO DE NOVO CARTÃO
+  // MANIPULADOR DE ADIÇÃO DE NOVO CARTÃO
   const handleAddPlaceSubmit = (data) => {
     api
       .createCard(data)
       .then((newCard) => {
-        setCards([newCard, ...cards]); // Atualiza o estado com uma cópia estendida contendo o novo cartão
+        setCards((state) => [newCard, ...state]); // Atualiza o estado com uma cópia estendida contendo o novo cartão
         handleClosePopup();
       })
       .catch((err) => {
@@ -76,9 +76,13 @@ function App() {
 
   // MANIPULADOR DE CURTIDAS ELEVADO
   function handleCardLike(card) {
-    const isLiked = card.likes
-      ? card.likes.some((user) => user._id === currentUser?._id)
-      : false;
+    // Avalia o status de isLiked de forma híbrida (propriedade direta ou busca no array likes)
+    const isLiked = typeof card.isLiked === "boolean"
+      ? card.isLiked
+      : (Array.isArray(card.likes) && card.likes.some((user) => {
+          const userId = typeof user === "object" ? user?._id : user;
+          return String(userId) === String(currentUser?._id);
+        }));
 
     api
       .changeLikeCardStatus(card._id, !isLiked)
@@ -110,7 +114,7 @@ function App() {
         currentUser,
         handleUpdateUser,
         handleUpdateAvatar,
-        handleAddPlaceSubmit, //  Disponibilizado no contexto para o NewCard consumir
+        handleAddPlaceSubmit,
       }}
     >
       <div className="page">

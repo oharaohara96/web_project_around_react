@@ -46,7 +46,7 @@ class Api {
     }).then(this._checkResponse);
   }
 
-  // 🌟 NOVO MÉTODO: Cria e adiciona um novo cartão
+  // Cria e adiciona um novo cartão
   createCard({ name, link }) {
     return fetch(`${this._baseUrl}/cards`, {
       method: "POST",
@@ -58,9 +58,9 @@ class Api {
     }).then(this._checkResponse);
   }
 
-  // Alterna entre PUT (curtir) e DELETE (descurtir)
+  // Alterna entre PUT (curtir) e DELETE (descurtir) na rota /cards/:cardId/likes
   changeLikeCardStatus(cardId, isLiked) {
-    return fetch(`${this._baseUrl}/cards/likes/${cardId}`, {
+    return fetch(`${this._baseUrl}/cards/${cardId}/likes`, {
       method: isLiked ? "PUT" : "DELETE",
       headers: this._headers,
     }).then(this._checkResponse);
@@ -79,7 +79,7 @@ class Api {
 const api = new Api({
   baseUrl: "https://around-api.pt-br.tripleten-services.com/v1",
   headers: {
-    authorization: "81de0a23-a770-4ca8-ba01-ee358d3f49df", // Insira o seu token válido fornecido na plataforma
+    authorization: "81de0a23-a770-4ca8-ba01-ee358d3f49df",
     "Content-Type": "application/json",
   },
 });

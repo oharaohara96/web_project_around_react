@@ -1,29 +1,31 @@
 import { useContext } from "react";
 import ImagePopup from "../Popup/ImagePopup/ImagePopup.jsx";
 
-// Importe do contexto (subindo 4 níveis até a pasta src/contexts)
+// Importe do contexto
 import CurrentUserContext from "../../../../contexts/CurrentUserContext.js";
 
 export default function Card(props) {
-  // 1. Receber props
   const { card, onCardClick, onCardLike, onCardDelete } = props;
-  const { name, link, likes, owner } = card;
+  const { name, link, likes = [], owner } = card;
 
-  //  Desestruturação para extrair currentUser do contexto
   const { currentUser } = useContext(CurrentUserContext);
 
-  // Verificar se o usuário atual é o dono do cartão
-  const isOwn = owner?._id === currentUser?._id;
+  const currentUserId = currentUser?._id ? String(currentUser._id) : null;
+  const ownerId = typeof owner === "object" ? String(owner?._id) : String(owner);
+  const isOwn = currentUserId && ownerId === currentUserId;
 
-  // Esconder/Mostrar o botão de deletar com base no dono do cartão
   const cardDeleteButtonClassName = `card__delete-button ${
     isOwn ? "card__delete-button_visible" : "card__delete-button_hidden"
   }`;
 
-  // Verificar de forma segura se o usuário atual curtiu este cartão
-  const isLiked = likes?.some((user) => user._id === currentUser?._id);
+  // Identifica se o usuário curtiu o cartão
+  const isLiked = typeof card.isLiked === "boolean"
+    ? card.isLiked
+    : (Array.isArray(likes) && currentUserId
+        ? likes.some((user) => String(user?._id || user) === currentUserId)
+        : false);
 
-  // Modificador de classe CSS para ativar/desativar o coração
+  // Modificador BEM oficial do projeto para o coração preenchido
   const cardLikeButtonClassName = `card__like-button ${
     isLiked ? "card__like-button_is-active" : ""
   }`;
@@ -32,12 +34,10 @@ export default function Card(props) {
     children: <ImagePopup card={card} />
   };
 
-  // Manipulador do clique no coração
   function handleLikeClick() {
     onCardLike(card);
   }
 
-  // Manipulador do clique no botão de lixeira
   function handleDeleteClick() {
     onCardDelete(card);
   }
